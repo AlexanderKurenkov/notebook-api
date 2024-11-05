@@ -1,0 +1,192 @@
+openapi: 3.0.0
+info:
+  title: API записной книжки
+  version: 1.0.0
+  description: API для управления контактами в записной книжке
+
+servers:
+  - url: http://localhost/api/v1
+    description: Локальный сервер для разработки
+
+paths:
+  /notebook:
+    get:
+      summary: Получить список контактов
+      description: Возвращает постраничный список контактов.
+      responses:
+        200:
+          description: Список контактов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Contact"
+
+    post:
+      summary: Создать новый контакт
+      description: Добавляет новый контакт в записную книжку.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactCreate"
+      responses:
+        201:
+          description: Контакт успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contact"
+        400:
+          description: Ошибка валидации
+
+  /notebook/{id}:
+    get:
+      summary: Получить контакт по ID
+      description: Возвращает данные одного контакта по его ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID контакта
+      responses:
+        200:
+          description: Данные контакта
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contact"
+        404:
+          description: Контакт не найден
+
+    put:
+      summary: Обновить контакт по ID
+      description: Обновляет информацию о существующем контакте.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID контакта
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactUpdate"
+      responses:
+        200:
+          description: Контакт успешно обновлен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contact"
+        400:
+          description: Ошибка валидации
+        404:
+          description: Контакт не найден
+
+    delete:
+      summary: Удалить контакт по ID
+      description: Удаляет контакт из записной книжки по его ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID контакта
+      responses:
+        204:
+          description: Контакт успешно удален
+        404:
+          description: Контакт не найден
+
+components:
+  schemas:
+    Contact:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        full_name:
+          type: string
+          example: "Иван Иванов"
+        company:
+          type: string
+          example: "Пример компании"
+        phone:
+          type: string
+          example: "1234567890"
+        email:
+          type: string
+          example: "ivan@example.com"
+        birth_date:
+          type: string
+          format: date
+          example: "1980-01-01"
+        photo:
+          type: string
+          format: binary
+          example: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD..."
+
+    ContactCreate:
+      type: object
+      required:
+        - full_name
+        - phone
+        - email
+      properties:
+        full_name:
+          type: string
+          example: "Иван Иванов"
+        company:
+          type: string
+          example: "Пример компании"
+        phone:
+          type: string
+          example: "1234567890"
+        email:
+          type: string
+          example: "ivan@example.com"
+        birth_date:
+          type: string
+          format: date
+          example: "1980-01-01"
+        photo:
+          type: string
+          format: binary
+          example: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD..."
+
+    ContactUpdate:
+      type: object
+      properties:
+        full_name:
+          type: string
+          example: "Иван Иванов"
+        company:
+          type: string
+          example: "Пример компании"
+        phone:
+          type: string
+          example: "1234567890"
+        email:
+          type: string
+          example: "ivan@example.com"
+        birth_date:
+          type: string
+          format: date
+          example: "1980-01-01"
+        photo:
+          type: string
+          format: binary
+          example: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD..."
